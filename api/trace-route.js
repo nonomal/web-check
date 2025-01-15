@@ -1,8 +1,8 @@
-const traceroute = require('traceroute');
-const url = require('url');
-const middleware = require('./_common/middleware');
+import url from 'url';
+import traceroute from 'traceroute';
+import middleware from './_common/middleware.js';
 
-const executeTraceroute = async (urlString, context) => {
+const traceRouteHandler = async (urlString, context) => {
   // Parse the URL and get the hostname
   const urlObject = url.parse(urlString);
   const host = urlObject.hostname;
@@ -28,4 +28,5 @@ const executeTraceroute = async (urlString, context) => {
   };
 };
 
-exports.handler = middleware(executeTraceroute);
+export const handler = middleware(traceRouteHandler);
+export default handler;

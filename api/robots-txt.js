@@ -1,5 +1,5 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
 const parseRobotsTxt = (content) => {
   const lines = content.split('\n');
@@ -31,7 +31,7 @@ const parseRobotsTxt = (content) => {
   return { robots: rules };
 }
 
-const handler = async function(url) {
+const robotsHandler = async function(url) {
   let parsedURL;
   try {
     parsedURL = new URL(url);
@@ -67,4 +67,5 @@ const handler = async function(url) {
   }
 };
 
-exports.handler = middleware(handler);
+export const handler = middleware(robotsHandler);
+export default handler;

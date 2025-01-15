@@ -1,8 +1,8 @@
-const dns = require('dns');
-const util = require('util');
-const middleware = require('./_common/middleware');
+import dns from 'dns';
+import util from 'util';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const dnsHandler = async (url) => {
   let hostname = url;
 
   // Handle URLs by extracting hostname
@@ -51,4 +51,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = middleware(handler);
+export const handler = middleware(dnsHandler);
+export default handler;

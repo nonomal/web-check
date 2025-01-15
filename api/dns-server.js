@@ -1,9 +1,8 @@
-const dns = require('dns');
-const dnsPromises = dns.promises;
-const axios = require('axios');
-const commonMiddleware = require('./_common/middleware');
+import { promises as dnsPromises, lookup } from 'dns';
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const dnsHandler = async (url) => {
   try {
     const domain = url.replace(/^(?:https?:\/\/)?/i, "");
     const addresses = await dnsPromises.resolve4(domain);
@@ -41,4 +40,7 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = commonMiddleware(handler);
+
+export const handler = middleware(dnsHandler);
+export default handler;
+

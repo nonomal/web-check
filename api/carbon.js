@@ -1,7 +1,7 @@
-const https = require('https');
-const middleware = require('./_common/middleware');
+import https from 'https';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const carbonHandler = async (url) => {
 
   // First, get the size of the website's HTML
   const getHtmlSize = (url) => new Promise((resolve, reject) => {
@@ -48,4 +48,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = middleware(handler);
+export const handler = middleware(carbonHandler);
+export default handler;

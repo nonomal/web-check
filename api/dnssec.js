@@ -1,7 +1,7 @@
-const https = require('https');
-const commonMiddleware = require('./_common/middleware'); // Make sure this path is correct
+import https from 'https';
+import middleware from './_common/middleware.js';
 
-const fetchDNSRecords = async (domain, event, context) => {
+const dnsSecHandler = async (domain) => {
   const dnsTypes = ['DNSKEY', 'DS', 'RRSIG'];
   const records = {};
 
@@ -25,7 +25,11 @@ const fetchDNSRecords = async (domain, event, context) => {
           });
 
           res.on('end', () => {
-            resolve(JSON.parse(data));
+            try {
+              resolve(JSON.parse(data));
+            } catch (error) {
+              reject(new Error('Invalid JSON response'));
+            }
           });
 
           res.on('error', error => {
@@ -49,4 +53,5 @@ const fetchDNSRecords = async (domain, event, context) => {
   return records;
 };
 
-exports.handler = commonMiddleware(fetchDNSRecords);
+export const handler = middleware(dnsSecHandler);
+export default handler;

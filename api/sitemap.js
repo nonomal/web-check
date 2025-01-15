@@ -1,20 +1,21 @@
-const commonMiddleware = require('./_common/middleware');
+import axios from 'axios';
+import xml2js from 'xml2js';
+import middleware from './_common/middleware.js';
 
-const axios = require('axios');
-const xml2js = require('xml2js');
-
-const handler = async (url) => {
+const sitemapHandler = async (url) => {
   let sitemapUrl = `${url}/sitemap.xml`;
+
+  const hardTimeOut = 5000;
 
   try {
     // Try to fetch sitemap directly
     let sitemapRes;
     try {
-      sitemapRes = await axios.get(sitemapUrl, { timeout: 5000 });
+      sitemapRes = await axios.get(sitemapUrl, { timeout: hardTimeOut });
     } catch (error) {
       if (error.response && error.response.status === 404) {
         // If sitemap not found, try to fetch it from robots.txt
-        const robotsRes = await axios.get(`${url}/robots.txt`, { timeout: 5000 });
+        const robotsRes = await axios.get(`${url}/robots.txt`, { timeout: hardTimeOut });
         const robotsTxt = robotsRes.data.split('\n');
 
         for (let line of robotsTxt) {
@@ -25,13 +26,10 @@ const handler = async (url) => {
         }
 
         if (!sitemapUrl) {
-          return {
-            statusCode: 404,
-            body: JSON.stringify({ skipped: 'No sitemap found' }),
-          };
+          return { skipped: 'No sitemap found' };
         }
 
-        sitemapRes = await axios.get(sitemapUrl, { timeout: 5000 });
+        sitemapRes = await axios.get(sitemapUrl, { timeout: hardTimeOut });
       } else {
         throw error; // If other error, throw it
       }
@@ -40,25 +38,16 @@ const handler = async (url) => {
     const parser = new xml2js.Parser();
     const sitemap = await parser.parseStringPromise(sitemapRes.data);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(sitemap),
-    };
+    return sitemap;
   } catch (error) {
-    // If error occurs
-    console.log(error.message);
     if (error.code === 'ECONNABORTED') {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Request timed out' }),
-      };
+      return { error: `Request timed-out after ${hardTimeOut}ms` };
     } else {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: error.message }),
-      };
+      return { error: error.message };
     }
   }
 };
 
-exports.handler = commonMiddleware(handler);
+export const handler = middleware(sitemapHandler);
+export default handler;
+

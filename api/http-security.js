@@ -1,14 +1,14 @@
-const axios = require('axios');
-const middleware = require('./_common/middleware');
+import axios from 'axios';
+import middleware from './_common/middleware.js';
 
-const handler = async (url) => {
+const httpsSecHandler = async (url) => {
   const fullUrl = url.startsWith('http') ? url : `http://${url}`;
   
   try {
     const response = await axios.get(fullUrl);
     const headers = response.headers;
     return {
-      strictTransportPolicy: headers['strict-transport-policy'] ? true : false,
+      strictTransportPolicy: headers['strict-transport-security'] ? true : false,
       xFrameOptions: headers['x-frame-options'] ? true : false,
       xContentTypeOptions: headers['x-content-type-options'] ? true : false,
       xXSSProtection: headers['x-xss-protection'] ? true : false,
@@ -22,4 +22,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = middleware(handler);
+export const handler = middleware(httpsSecHandler);
+export default handler;

@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer-core');
-const chromium = require('chrome-aws-lambda');
-const middleware = require('./_common/middleware');
+import puppeteer from 'puppeteer-core';
+import chromium from 'chrome-aws-lambda';
+import middleware from './_common/middleware.js';
 
 const screenshotHandler = async (targetUrl) => {
 
@@ -21,7 +21,7 @@ const screenshotHandler = async (targetUrl) => {
   let browser = null;
   try {
       browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [...chromium.args, '--no-sandbox'], // Add --no-sandbox flag
       defaultViewport: { width: 800, height: 600 },
       executablePath: process.env.CHROME_PATH || await chromium.executablePath,
       headless: chromium.headless,
@@ -58,4 +58,5 @@ const screenshotHandler = async (targetUrl) => {
   }
 };
 
-exports.handler = middleware(screenshotHandler);
+export const handler = middleware(screenshotHandler);
+export default handler;

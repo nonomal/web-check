@@ -1,7 +1,7 @@
-const dns = require('dns').promises;
-const middleware = require('./_common/middleware');
+import dns from 'dns/promises';
+import middleware from './_common/middleware.js';
 
-const handler = async (url, event, context) => {
+const txtRecordHandler = async (url, event, context) => {
   try {
     const parsedUrl = new URL(url);
     
@@ -29,4 +29,5 @@ const handler = async (url, event, context) => {
   }
 };
 
-exports.handler = middleware(handler);
+export const handler = middleware(txtRecordHandler);
+export default handler;

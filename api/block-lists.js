@@ -1,6 +1,6 @@
-const dns = require('dns');
-const { URL } = require('url');
-const middleware = require('./_common/middleware');
+import dns from 'dns';
+import { URL } from 'url';
+import middleware from './_common/middleware.js';
 
 const DNS_SERVERS = [
   { name: 'AdGuard', ip: '176.103.130.130' },
@@ -94,12 +94,12 @@ const checkDomainAgainstDnsServers = async (domain) => {
   return results;
 };
 
-exports.handler = middleware(async (url) => {
+export const blockListHandler = async (url) => {
   const domain = new URL(url).hostname;
   const results = await checkDomainAgainstDnsServers(domain);
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ blocklists: results })
-  };
-});
+  return { blocklists: results };
+};
+
+export const handler = middleware(blockListHandler);
+export default handler;
 

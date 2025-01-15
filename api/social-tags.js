@@ -1,9 +1,8 @@
-const commonMiddleware = require('./_common/middleware');
+import axios from 'axios';
+import cheerio from 'cheerio';
+import middleware from './_common/middleware.js';
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-
-const handler = async (url) => {
+const socialTagsHandler = async (url) => {
   
   // Check if url includes protocol
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -50,16 +49,9 @@ const handler = async (url) => {
     };
 
     if (Object.keys(metadata).length === 0) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ skipped: 'No metadata found' }),
-      };
+      return { skipped: 'No metadata found' };
     }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(metadata),
-    };
+    return metadata;
   } catch (error) {
     return {
       statusCode: 500,
@@ -68,4 +60,5 @@ const handler = async (url) => {
   }
 };
 
-exports.handler = commonMiddleware(handler);
+export const handler = middleware(socialTagsHandler);
+export default handler;

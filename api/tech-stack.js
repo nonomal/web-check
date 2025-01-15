@@ -1,7 +1,7 @@
-const Wappalyzer = require('wappalyzer');
-const middleware = require('./_common/middleware');
+import Wappalyzer from 'wappalyzer';
+import middleware from './_common/middleware.js';
 
-const analyzeSiteTechnologies = async (url) => {
+const techStackHandler = async (url) => {
   const options = {};
 
   const wappalyzer = new Wappalyzer(options);
@@ -27,4 +27,5 @@ const analyzeSiteTechnologies = async (url) => {
   }
 };
 
-exports.handler = middleware(analyzeSiteTechnologies);
+export const handler = middleware(techStackHandler);
+export default handler;

@@ -1,6 +1,8 @@
-const { https } = require('follow-redirects');
-const { URL } = require('url');
-const middleware = require('./_common/middleware');
+import { URL } from 'url';
+import followRedirects from 'follow-redirects';
+import middleware from './_common/middleware.js';
+
+const { https } = followRedirects;
 
 const SECURITY_TXT_PATHS = [
   '/security.txt',
@@ -69,8 +71,6 @@ const securityTxtHandler = async (urlParam) => {
   return { isPresent: false };
 };
 
-exports.handler = middleware(securityTxtHandler);
-
 async function fetchSecurityTxt(baseURL, path) {
   return new Promise((resolve, reject) => {
     const url = new URL(path, baseURL);
@@ -91,3 +91,6 @@ async function fetchSecurityTxt(baseURL, path) {
     });
   });
 }
+
+export const handler = middleware(securityTxtHandler);
+export default handler;
